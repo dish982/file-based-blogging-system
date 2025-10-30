@@ -1,4 +1,4 @@
-# ** File based blogging system**
+# File based blogging system
 
 A simple blogging platform built with **Node.js**, **Express**, and **EJS** that allows users to create, edit, and delete blog posts. The project demonstrates CRUD operations, routing, and basic templating for a server-side rendered application.
 
@@ -63,3 +63,4 @@ This project is for educational and portfolio purposes only.
 
 ## Author
 Made with ❤️ by [Disha](https://github.com/dish982)
+
