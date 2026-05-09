@@ -1,63 +1,68 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Plus+Jakarta+Sans:wght@400;700&display=swap');
+
+:root {
+    --primary: #8B2D38;
+    --bg-creme: #fcfdf5; 
+    --pill-bg: #FDE2E4;
+    --text: #1a1012;
+}
+
 body {
-
-  font-family: Arial, sans-serif;
-
-  background-color: #f4f4f4;
-
-  color: #333;
-
-  margin: 20px;
-
-  padding: 0;
-
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: var(--bg-creme);
+    color: var(--text);
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 60px 20px;
 }
 
 h1 {
-
-  text-align: center;
-
-  margin-top: 20px;
-
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    color: var(--primary);
+    margin-bottom: 40px;
 }
 
-ul {
-
-  list-style-type: none;
-
-  padding: 0;
-
-}
-
+/* Card Style for Posts */
 li {
-
-  padding: 8px;
-
-  background-color: #fff;
-
-  margin: 8px 0;
-
+    background: white;
+    padding: 20px 30px;
+    border-radius: 2rem;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid rgba(139, 45, 56, 0.1);
+    transition: transform 0.3s ease;
 }
 
-a {
+li:hover { transform: translateY(-3px); }
 
-  text-decoration: none;
-
-  color: #333;
-
-}
-
-a:hover {
-
-  color: #007BFF;
-
-}
-
-textarea, input {
-    display: block;
-    width: 300px;
-    margin-bottom: 10px;
+/* Inputs & Buttons */
+input, textarea {
+    width: 100%;
+    padding: 15px;
+    border-radius: 1rem;
+    border: 1px solid var(--pill-bg);
+    margin-bottom: 20px;
+    font-family: inherit;
 }
 
 button {
-    padding: 5px 10px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 100px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.3s;
+}
+
+button[type="submit"]:hover { opacity: 0.9; }
+
+.delete-btn {
+    background: var(--pill-bg);
+    color: var(--primary);
+    font-size: 11px;
 }
