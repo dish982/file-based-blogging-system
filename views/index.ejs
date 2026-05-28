@@ -1,28 +1,139 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Blog</title>
-  <link rel="stylesheet" href="/css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WordWeave</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        maroon: {
+                            DEFAULT: '#722f37',
+                            hover: '#5c242a',
+                            light: '#fdfafb'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body>
-  <h1>Welcome to My Blog</h1>
-  <h2>Create new post</h2>
-  <form action="/create" method="POST" class="create-section">
-    <input type="text" name="title" placeholder="Title" required/><br>
-    <textarea name="content" placeholder="Content" required></textarea>
-        <br>
-        <button type="submit">Create</button>
-  </form>
-  <ul>
-    <% posts.forEach(post => { %>
-      <li>
-        <a href="/post/<%= post.title %>"><%= post.title %></a>
-        <form action="/delete/<%= post.title %>" method="POST">
-          <button type="submit">Delete</button> 
-        </form>
-      </li>
-    <% }) %>
-  </ul>
+<body class="bg-[#fffdfa] min-h-screen font-sans text-gray-800 antialiased">
+
+    <nav class="bg-white border-b border-gray-100 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+            
+            <div class="flex items-center shrink-0">
+                <span class="text-2xl font-extrabold text-maroon tracking-tight">WordWeave</span>
+            </div>
+            
+            <form action="/" method="GET" class="flex-1 max-w-md mx-4 hidden sm:block">
+                <div class="relative">
+                    <!-- search bar currentSearch from blog.js "/" route -->
+                    <input type="text" name="search" value="<%= locals.currentSearch || '' %>" 
+                           placeholder="SEARCH BLOGS" 
+                           class="w-full pl-5 p-2 py-2 bg-gray-50 border rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-maroon/20 focus:border-maroon focus:bg-white transition-all">
+                </div>
+            </form>
+
+            <div class="flex items-center gap-4 shrink-0">
+                <% if (locals.user && user.email) { %>
+                    <div class="hidden md:flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-xl border border-gray-100">
+                        <div class="w-7 h-7 bg-maroon text-white font-bold rounded-full flex items-center justify-center text-xs uppercase shadow-sm">
+                            <%= user.email.charAt(0) %>
+                        </div>
+                        <span class="text-sm font-semibold text-gray-600"><%= user.email %></span>
+                    </div>
+                <% } %>
+
+                <a href="/auth/logout" class="text-sm font-bold text-gray-500 hover:text-red-600 transition-colors duration-200">
+                    Logout
+                </a>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Write new post div -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <div class="lg:col-span-1">
+            <div class="bg-white p-6 rounded-2xl shadow-md border border-gray-100 sticky top-24">
+                <h2 class="text-xl font-extrabold text-gray-900 mb-1">Weave a New Story</h2>
+                <p class="text-xs text-gray-500 font-medium mb-5">Share your insights, logs, or ideas with the ecosystem instantly.</p>
+                
+                <form action="/create" method="POST" class="space-y-4">
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-xs font-bold uppercase tracking-wider text-gray-500">Post Title</label>
+                        <input type="text" name="title" placeholder="Enter a descriptive title." required
+                               class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-maroon/20 focus:border-maroon focus:bg-white transition-all duration-200">
+                    </div>
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-xs font-bold uppercase tracking-wider text-gray-500">Story Content</label>
+                        <textarea name="content" rows="6" placeholder="Write your thoughts down here." required
+                                  class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-maroon/20 focus:border-maroon focus:bg-white transition-all duration-200 resize-none"></textarea>
+                    </div>
+                    
+                    <button type="submit" class="w-full py-3 bg-maroon text-white font-bold rounded-xl hover:bg-maroon-hover active:scale-[0.99] transition-all duration-200 text-sm shadow-md shadow-maroon/10">
+                        Publish Story
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="lg:col-span-2 space-y-6">
+            <div class="flex items-center justify-between mb-2">
+                <h3 class="text-xl font-extrabold text-gray-900 tracking-tight">
+                    <%= locals.currentSearch ? "Search Results" : "Recent Publications" %>
+                </h3>
+                <span class="text-xs font-bold text-gray-400 uppercase bg-gray-100 px-2.5 py-1 rounded-md">
+                    <%= posts.length %> Posts Found
+                </span>
+            </div>
+
+            <% if (posts.length === 0) { %>
+                <div class="bg-white rounded-2xl p-12 text-center border border-dashed border-gray-200 shadow-sm flex flex-col items-center justify-center">
+                    <div class="w-12 h-12 bg-maroon/5 text-maroon rounded-full flex items-center justify-center text-xl mb-4">✒️</div>
+                    <h4 class="text-base font-bold text-gray-800 mb-1">No stories match your criteria</h4>
+                    <p class="text-sm text-gray-500 max-w-sm">Try modifying your search or use the ledger interface on the left to write a brand new track entry.</p>
+                </div>
+            <% } else { %>
+                <div class="grid grid-cols-1 gap-4">
+                    <% posts.forEach(post => { %>
+                        <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            
+                            <div class="space-y-1.5 flex-1">
+                                <a href="/post/<%= encodeURIComponent(post.title) %>" class="text-lg font-bold text-gray-900 hover:text-maroon block transition-colors">
+                                    <%= post.title %>
+                                </a>
+                                <p class="text-xs text-gray-400 font-medium flex items-center gap-2">
+                                    <span>Document Log</span> • <span>Read and modify content parameters</span>
+                                </p>
+                            </div>
+
+                            <div class="flex items-center gap-2.5 self-end sm:self-center">
+                                <a href="/post/<%= encodeURIComponent(post.title) %>" class="px-3.5 py-2 border border-gray-200 hover:border-gray-300 text-gray-600 hover:text-gray-900 text-xs font-bold rounded-xl transition-colors duration-200 bg-gray-50/50">
+                                    View
+                                </a>
+                                <a href="/edit/<%= encodeURIComponent(post.title) %>" class="px-3.5 py-2 border border-maroon/20 hover:border-maroon/40 text-maroon text-xs font-bold rounded-xl transition-colors duration-200 bg-maroon/5">
+                                    Edit
+                                </a>
+                                <form action="/delete/<%= encodeURIComponent(post.title) %>" method="POST" onsubmit="return confirm('Are you sure you want to permanently strip this story?');" class="inline">
+                                    <button type="submit" class="px-3.5 py-2 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold rounded-xl transition-colors duration-200">
+                                        Delete
+                                    </button>
+                                </form>
+                            </div>
+
+                        </div>
+                    <% }) %>
+                </div>
+            <% } %>
+        </div>
+
+    </main>
+
 </body>
 </html>
