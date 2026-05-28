@@ -56,8 +56,7 @@ A simple blogging platform built with **Node.js**, **Express**, and **EJS** that
    
 ## **Preview**
 
-![Preview](images/preview1.jpg)<br>
-![Preview](images/preview2.jpg)
+![Preview](images/preview_latest.png)
 
 This project is for educational and portfolio purposes only.
 
