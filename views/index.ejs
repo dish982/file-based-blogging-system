@@ -76,6 +76,22 @@
                         <textarea name="content" rows="6" placeholder="Write your thoughts down here." required
                                   class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-maroon/20 focus:border-maroon focus:bg-white transition-all duration-200 resize-none"></textarea>
                     </div>
+
+                    <!-- Toggle Switch  -->
+                    <div class="inline-flex items-center gap-2 py-1">
+                        <span class="text-slate-500 text-xs font-bold uppercase tracking-wider">Private</span>
+                        
+                        <div class="relative inline-block w-11 h-5">
+                            <input id="switch-component-on" name="isPublic" value="true" type="checkbox" checked
+                                class="peer appearance-none w-11 h-5 bg-slate-200 checked:bg-maroon rounded-full cursor-pointer transition-colors duration-300" />
+                            
+                            <label for="switch-component-on" 
+                                class="absolute top-0 left-0 w-5 h-5 bg-white rounded-full border border-slate-300 shadow-sm transition-transform duration-300 peer-checked:translate-x-6 peer-checked:border-maroon cursor-pointer">
+                            </label>
+                        </div>
+                        
+                        <span class="text-slate-500 text-xs font-bold uppercase tracking-wider">Public</span>
+                    </div>
                     
                     <button type="submit" class="w-full py-3 bg-maroon text-white font-bold rounded-xl hover:bg-maroon-hover active:scale-[0.99] transition-all duration-200 text-sm shadow-md shadow-maroon/10">
                         Publish Story
@@ -119,7 +135,16 @@
                                     View
                                 </a>
 
-                                <% if (locals.user && (user._id || user.id).toString() === post.userId.toString()) { %>
+                                <!-- populated user id fix -->
+                                <% 
+                                const loggedInId = (locals.user && (user._id || user.id)) ? (user._id || user.id).toString() : null;
+                                
+                                const postAuthorId = post.userId && post.userId._id ? post.userId._id.toString() : (post.userId ? post.userId.toString() : '');
+                                %>
+
+                                <% if (loggedInId && loggedInId === postAuthorId) { %>
+
+
                                     <a href="/edit/<%= encodeURIComponent(post.title) %>" class="px-3.5 py-2 border border-maroon/20 hover:border-maroon/40 text-maroon text-xs font-bold rounded-xl transition-colors duration-200 bg-maroon/5">
                                     Edit
                                     </a>
