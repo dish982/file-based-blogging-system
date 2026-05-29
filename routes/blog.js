@@ -15,30 +15,42 @@ function requireLogin(req, res, next) {
 // Display Blogs at main page
 router.get('/', requireLogin, async (req, res) => {
     try {
+        const activeUserId = req.session?.user?.id || req.session?.user?._id || null;
+        
+        // Search handling 
+        let searchFilter = {};
+        if (req.query.search) {
+            searchFilter.title = { $regex: req.query.search, $options: 'i' };
+        }
 
-        const posts = await Post.find().sort({
-            createdAt: -1
-        });
+        // Single Combined Query: Filters + Populate + Sort all in one continuous chain!
+        const posts = await Post.find({
+            ...searchFilter,
+            $or: [
+                { isPublic: true },
+                { userId: activeUserId }
+            ]
+        })
+        .populate('userId') // Fetches user records schemas info
+        .sort({ createdAt: -1 }); 
 
         res.render('index', { 
-        posts: posts || [], 
-        user: req.session.user,
-        currentSearch: req.query.search || '' 
-    });
-
+            posts: posts || [], 
+            user: req.session.user,
+            currentSearch: req.query.search || '' 
+        });
 
     } catch (err) {
         console.error("Dashboard Fetch Error:", err);
         res.status(500).send("Error fetching dashboard posts from database.");
     }
-    
 });
 
 // Create new blos 
 
 router.post('/create',requireLogin, async (req, res) => {
     try {
-        const { title, content } = req.body;
+        const { title, content, isPublic } = req.body;
 
         const activeUserId = req.session.user.id || req.session.user._id;
 
@@ -50,7 +62,8 @@ router.post('/create',requireLogin, async (req, res) => {
         await Post.create({
             title: title.trim(),
             content: content,
-            userId: activeUserId 
+            userId: activeUserId ,
+            isPublic: isPublic === 'true'
         });
         res.redirect('/');
 
@@ -64,10 +77,10 @@ router.post('/create',requireLogin, async (req, res) => {
 // Fetching Blogs
 router.get('/post/:title',requireLogin, async (req, res) => {
     try {
-        const post = await Post.findOne({ title: req.params.title });
+        const post = await Post.findOne({ title: req.params.title }).populate("userId");
         if(!post) return res.status(404).send("Post not found in database");
 
-        res.render("show", {title: post.title, content: post.content});
+        res.render("show", { post: post, user: req.session.user });
 
     } catch (err) {
         console.error("Show Post Error:", err);
@@ -78,10 +91,23 @@ router.get('/post/:title',requireLogin, async (req, res) => {
 // Editing Blogs
 router.get('/edit/:title', requireLogin, async (req, res) => {
     try {
+
+        // fetch from mongodb
         const post = await Post.findOne({ title: req.params.title });
         if (!post) return res.status(404).send('Post not found.');
-        
-        res.render('edit', { title: post.title, content: post.content });
+
+        // extract userid from session
+        const activeUserId = req.session.user.id || req.session.user._id;
+
+        if (post.userId.toString() !== activeUserId.toString()){
+            console.warn(`Unauthorized edit attempt by user: ${activeUserId}`);
+            return res.status(403).send("Access Denied: You do not own this story.");
+        }
+
+        // render to template
+        // res.render('edit', { title: post.title, content: post.content });
+        res.render('edit', { post: post, user: req.session.user });
+
     } catch (err) {
         console.error("Load Edit Form Error:", err);
         res.status(500).send("Server error loading the workspace parameters.");
@@ -91,13 +117,19 @@ router.get('/edit/:title', requireLogin, async (req, res) => {
 // Updating Blogs
 router.post('/update/:title', requireLogin, async (req, res) => {
     try {
-        const { content } = req.body;
+        const { content, isPublic } = req.body;
+        const activeUserId = req.session.user.id || req.session.user._id;
+        const post = await Post.findOne({ title: req.params.title });
         
-        await Post.findOneAndUpdate(
-            { title: req.params.title }, 
-            { content: content },
-            { new: true }
-        );
+        if(!post) return res.status(404).send("Post not found in database");
+        
+        if (post.userId.toString() !== activeUserId.toString()){
+            return res.status(403).send("Access Denied: You do not own this story.");
+        }
+
+        post.content = content;
+        post.isPublic = isPublic === 'true';
+        await post.save();
         
         res.redirect(`/post/${encodeURIComponent(req.params.title)}`);
     } catch (err) {
@@ -109,8 +141,18 @@ router.post('/update/:title', requireLogin, async (req, res) => {
 // Deleting Blogs
 router.post('/delete/:title', requireLogin, async (req, res) => {
     try {
-        await Post.deleteOne({ title: req.params.title });
+        const activeUserId = req.session.user.id || req.session.user._id;
+        const post = await Post.findOne({ title: req.params.title });
+        
+        if(!post) return res.status(404).send("Post not found in database");
+
+        if (post.userId.toString() !== activeUserId.toString()){
+            return res.status(403).send("Access Denied: You do not own this story.");
+        }
+
+        await Post.deleteOne({ _id: post._id });
         res.redirect('/');
+
     } catch (err) {
         console.error("Delete Post Error:", err);
         res.status(500).send("Error removing the selected document entry.");
