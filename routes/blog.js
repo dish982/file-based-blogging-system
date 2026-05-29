@@ -26,7 +26,6 @@ router.get('/', requireLogin, async (req, res) => {
         currentSearch: req.query.search || '' 
     });
 
-
     } catch (err) {
         console.error("Dashboard Fetch Error:", err);
         res.status(500).send("Error fetching dashboard posts from database.");
@@ -78,9 +77,20 @@ router.get('/post/:title',requireLogin, async (req, res) => {
 // Editing Blogs
 router.get('/edit/:title', requireLogin, async (req, res) => {
     try {
+
+        // fetch from mongodb
         const post = await Post.findOne({ title: req.params.title });
         if (!post) return res.status(404).send('Post not found.');
-        
+
+        // extract userid from session
+        const activeUserId = req.session.user.id || req.session.user._id;
+
+        if (post.userId.toString() !== activeUserId.toString()){
+            console.warn(`Unauthorized edit attempt by user: ${activeUserId}`);
+            return res.status(403).send("Access Denied: You do not own this story.");
+        }
+
+        // render to template
         res.render('edit', { title: post.title, content: post.content });
     } catch (err) {
         console.error("Load Edit Form Error:", err);
@@ -92,12 +102,17 @@ router.get('/edit/:title', requireLogin, async (req, res) => {
 router.post('/update/:title', requireLogin, async (req, res) => {
     try {
         const { content } = req.body;
+        const activeUserId = req.session.user.id || req.session.user._id;
+        const post = await Post.findOne({ title: req.params.title });
         
-        await Post.findOneAndUpdate(
-            { title: req.params.title }, 
-            { content: content },
-            { new: true }
-        );
+        if(!post) return res.status(404).send("Post not found in database");
+        
+        if (post.userId.toString() !== activeUserId.toString()){
+            return res.status(403).send("Access Denied: You do not own this story.");
+        }
+
+        post.content = content;
+        await post.save();
         
         res.redirect(`/post/${encodeURIComponent(req.params.title)}`);
     } catch (err) {
@@ -109,8 +124,18 @@ router.post('/update/:title', requireLogin, async (req, res) => {
 // Deleting Blogs
 router.post('/delete/:title', requireLogin, async (req, res) => {
     try {
-        await Post.deleteOne({ title: req.params.title });
+        const activeUserId = req.session.user.id || req.session.user._id;
+        const post = await Post.findOne({ title: req.params.title });
+        
+        if(!post) return res.status(404).send("Post not found in database");
+
+        if (post.userId.toString() !== activeUserId.toString()){
+            return res.status(403).send("Access Denied: You do not own this story.");
+        }
+
+        await Post.deleteOne({ _id: post._id });
         res.redirect('/');
+
     } catch (err) {
         console.error("Delete Post Error:", err);
         res.status(500).send("Error removing the selected document entry.");

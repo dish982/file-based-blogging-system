@@ -4,11 +4,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
-    <link rel="stylesheet" href="/css/styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {extend: {colors: {maroon: {
+                            DEFAULT: '#722f37',
+                            hover: '#5c242a',
+                            light: '#fdfafb'
+                        }}}}}
+    </script>
 </head>
-<body>
-    <h1><%= title %></h1>
-    <p><%- content %></p>
-    <a href="/edit/<%= title %>">Edit</a> | <a href="/">Back</a>
+<body class="bg-[#fffdfa] min-h-screen font-sans text-gray-800 antialiased">
+    
+    <main>
+        <article>
+            <header>
+                <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight leading-tight mb-3">
+                    <%= title %></h1>
+            </header>
+
+            <section class="text-base sm:text-lg text-gray-700 leading-relaxed whitespace-pre-wrap font-medium">
+                <%- content %>
+            </section>
+
+            <footer>
+                <a href="/edit/<%= encodeURIComponent(title) %>" class="px-4 py-2 border border-maroon/20 hover:border-maroon/40 text-maroon text-xs font-bold rounded-xl transition-colors bg-maroon/5">
+                    Edit Document
+                </a>
+                <a href="/" class="px-4 py-2 border border-gray-200 hover:border-gray-300 text-gray-500 text-xs font-bold rounded-xl transition-colors bg-gray-50">
+                    Back to Feed
+                </a>
+            </footer>
+
+            
+        </article>
+    </main>
+
+
+
+    
+    
+    
 </body>
 </html>
