@@ -125,10 +125,22 @@
                                 <a href="/post/<%= encodeURIComponent(post.title) %>" class="text-lg font-bold text-gray-900 hover:text-maroon block transition-colors">
                                     <%= post.title %>
                                 </a>
-                                <p class="text-xs text-gray-400 font-medium flex items-center gap-2">
-                                    <span>Document Log</span> • <span>Read and modify content parameters</span>
+                                <p class="text-xs text-gray-400 font-medium flex items-center gap-2 text-maroon">
+                                    <%= post.userId && (post.userId.username || post.userId.name) ? (post.userId.username || post.userId.name) : 'Anonymous Writer' %>
                                 </p>
                             </div>
+
+                            <% if (post.isPublic) { %>
+                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-bold bg-green-50 text-green-700 border border-green-100 whitespace-nowrap">
+                            Public
+                        </span>
+                    <% } else { %>
+                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200 whitespace-nowrap shadow-sm">
+                            Private
+                        </span>
+                    <% } %>
+
+                            
 
                             <div class="flex items-center gap-2.5 self-end sm:self-center">
                                 <a href="/post/<%= encodeURIComponent(post.title) %>" class="px-3.5 py-2 border border-gray-200 hover:border-gray-300 text-gray-600 hover:text-gray-900 text-xs font-bold rounded-xl transition-colors duration-200 bg-gray-50/50">

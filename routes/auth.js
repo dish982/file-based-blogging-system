@@ -10,8 +10,8 @@ router.get('/', (req, res) => {
 
 // SIGNUP LOGIC
 router.post('/signup', async (req, res) => {
-    const { email, password } = req.body;
-
+    const { email, password, username } = req.body;
+    
     try {
         
         if (!email || !password) {
@@ -23,6 +23,26 @@ router.post('/signup', async (req, res) => {
             return res.render('auth', { error: 'User already exists! Please login.', success: null });
         }
 
+        
+        const usernameRegex = /^[a-zA-Z0-9_-]+$/;
+
+        if (!usernameRegex.test(username)) {
+            return res.render('auth', { 
+                error: 'Username can only contain alphanumeric characters, underscores, and hyphens.' 
+            });
+        }
+
+        if (username.length < 3 || username.length > 15) {
+            return res.render('auth', { 
+                error: 'Username must be between 3 and 15 characters long.' 
+            });
+        }
+
+        const existingUser = await User.findOne({ username });
+        if (existingUser) {
+            return res.render('auth', { error: 'Username is already taken!' });
+        }
+
         // Generate a 16-byte unique salt for this user
         const salt = crypto.randomBytes(16).toString('hex');
 
@@ -31,6 +51,7 @@ router.post('/signup', async (req, res) => {
 
         // Save everything into MongoDB
         user = new User({
+            username,
             email,
             salt,
             password: hashedPassword
