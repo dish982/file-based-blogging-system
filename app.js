@@ -26,7 +26,6 @@ app.use(express.json());
 //Serve static files (css, images)
 app.use(express.static(path.join(__dirname, 'public')));
 
-
 app.use(session({
     secret: process.env.SESSION_KEY,
     resave: true,            

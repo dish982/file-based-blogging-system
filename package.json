@@ -18,5 +18,8 @@
     "fs": "^0.0.1-security",
     "marked": "^16.1.2",
     "mongoose": "^9.6.2"
+  },
+  "devDependencies": {
+    "tailwindcss": "^4.3.0"
   }
 }
