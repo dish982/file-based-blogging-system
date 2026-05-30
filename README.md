@@ -1,39 +1,73 @@
-# File based blogging system
+# WordWeave — A Full-Stack Blogging Platform 🩷
 
-A simple blogging platform built with **Node.js**, **Express**, and **EJS** that allows users to create, edit, and delete blog posts. The project demonstrates CRUD operations, routing, and basic templating for a server-side rendered application.
+Hey there! Im Disha and WordWeave is my first solo fullstack project! WordWeave is a feature-rich full-stack blogging web application built using **Node.js**, **Express**, and **MongoDB**. It features a modern user dashboard, secure multi-user authentication, privacy controls (Public/Private blogs), dynamic search logic, and a fully responsive interface.
 
-## **Features**
+---
 
-- Create new blog posts
-- View all posts
-- Edit existing posts
-- Delete posts
-- Organized routes and views
-- Modular structure with Express Router
+## 🎨 Project Preview
 
-## **Tech Stack**
 
-* **Backend:** Node.js, Express.js
-* **Templating Engine:** EJS
+
+---
+
+## ✨ Features
+
+### 🔐 Secure Authentication & Session Control
+- Secure user signup and login architecture.
+- Session-based authorization (`express-session`) protecting sensitive dashboard and editor views.
+
+### ✍️ Comprehensive CRUD Management
+- **Create:** Intuitive, distraction-free blog creation form.
+- **Read:** Personalized interactive dashboard rendering aggregated feeds dynamically.
+- **Update/Delete:** Full ownership-guaranteed management systems allowing users to edit or delete their own posts safely.
+
+### 👁️ Privacy Framework
+- Granular control over visibility options (`isPublic: true/false`).
+- Public feeds are readable by all authenticated users, while private drafts remain strictly locked within the author's ecosystem.
+
+---
+
+## 💻 Tech Stack
+
+- **Backend Architecture:** Node.js, Express.js
+- **Database Layer:** MongoDB, Mongoose (ODM framework)
+- **Templating Engine:** Server-Side Rendered (SSR) EJS (Embedded JavaScript)
+- **Styling Utility:** Tailwind CSS 
+
+---
 
 ## **Installation**
 
 1. Clone the repository
 
    ```
-   git clone https://github.com/dish982/file-based-blogging-system.git
+   git clone https://github.com/dish982/WordWeave.git
    ```
 
 2. Navigate to the project folder
 
    ```
-   cd file-based-blogging-system
+   cd WordWeave
    ```
 
 3. Install dependencies
 
    ```
    npm install
+   ```
+
+4. Environment Variables Configuration
+
+   ```
+   port=your_port_number
+   mongodb_uri=your_mongodb_connection_string
+   session_key=your_custom_key
+   ```
+   
+4. Build Optimized Production Styles (Tailwind)
+
+   ```
+   npm run build:css
    ```
 
 4. Start the server
@@ -51,7 +85,7 @@ A simple blogging platform built with **Node.js**, **Express**, and **EJS** that
 5. Open in browser
 
    ```
-   http://localhost:3000
+   http://localhost:your_port_number
    ```
    
 ## **Preview**
