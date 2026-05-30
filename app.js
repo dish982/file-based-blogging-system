@@ -48,7 +48,7 @@ app.use((req, res, next) => {
 const authRoutes = require('./routes/auth'); 
 const blogRoutes = require('./routes/blog');
 
-app.use('/auth', authRoutes); // Connects POST /auth/login and POST /auth/signup
+app.use('/auth', authRoutes); 
 app.use('/', blogRoutes);
 
 //Start the server 

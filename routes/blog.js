@@ -12,41 +12,50 @@ function requireLogin(req, res, next) {
     next();
 }
 
-// Display Blogs at main page
+// Display Blogs at main page + search bar logic
 router.get('/', requireLogin, async (req, res) => {
-    try {
-        const activeUserId = req.session?.user?.id || req.session?.user?._id || null;
-        
-        // Search handling 
-        let searchFilter = {};
-        if (req.query.search) {
-            searchFilter.title = { $regex: req.query.search, $options: 'i' };
-        }
+  try {
+    const activeUserId = req.session?.user?.id || req.session?.user?._id || null;
 
-        // Single Combined Query: Filters + Populate + Sort all in one continuous chain!
-        const posts = await Post.find({
-            ...searchFilter,
+    // base query for public posts or users own posts
+    let mainQuery = {
+      $or: [
+        {isPublic: true},
+        {userId: activeUserId}
+      ]
+    };
+
+    // add search filter for title or content
+    if (req.query.search) {
+      const searchRegex = {
+        $regex: req.query.search,
+        $options: 'i'
+      };
+
+      mainQuery.$and = [
+        {
             $or: [
-                { isPublic: true },
-                { userId: activeUserId }
-            ]
-        })
-        .populate('userId') // Fetches user records schemas info
-        .sort({ createdAt: -1 }); 
-
-        res.render('index', { 
-            posts: posts || [], 
-            user: req.session.user,
-            currentSearch: req.query.search || '' 
-        });
-
-    } catch (err) {
-        console.error("Dashboard Fetch Error:", err);
-        res.status(500).send("Error fetching dashboard posts from database.");
+            {title: searchRegex},
+            {content: searchRegex}
+          ]
+        }
+      ];
     }
+
+    const posts = await Post.find(mainQuery).populate('userId').sort({ createdAt: -1 });
+
+    res.render('index', {
+      posts: posts || [],
+      user: req.session.user,
+      currentSearch: req.query.search || ''
+    });
+  } catch (err) {
+    console.error('dashboard fetch error:', err);
+    res.status(500).send('error fetching dashboard posts from database.');
+  }
 });
 
-// Create new blos 
+// Create new blogs
 
 router.post('/create',requireLogin, async (req, res) => {
     try {
@@ -105,7 +114,6 @@ router.get('/edit/:title', requireLogin, async (req, res) => {
         }
 
         // render to template
-        // res.render('edit', { title: post.title, content: post.content });
         res.render('edit', { post: post, user: req.session.user });
 
     } catch (err) {

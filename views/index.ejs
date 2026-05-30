@@ -4,24 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WordWeave</title>
-    <link rel="icon" type="image/x-icon" href="/images/favicon2.ico?v=2">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        maroon: {
-                            DEFAULT: '#722f37',
-                            hover: '#5c242a',
-                            light: '#fdfafb'
-                        }
-                    }
-                }
-            }
-        }
-    </script>
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico?v=2">
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+    <!-- Delete confirm modal pop up -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script> 
+
 </head>
 <body class="bg-[#fffdfa] min-h-screen font-sans text-gray-800 antialiased">
 
@@ -113,7 +102,7 @@
 
             <% if (posts.length === 0) { %>
                 <div class="bg-white rounded-2xl p-12 text-center border border-dashed border-gray-200 shadow-sm flex flex-col items-center justify-center">
-                    <div class="w-12 h-12 bg-maroon/5 text-maroon rounded-full flex items-center justify-center text-xl mb-4">✒️</div>
+                    
                     <h4 class="text-base font-bold text-gray-800 mb-1">No stories match your criteria</h4>
                     <p class="text-sm text-gray-500 max-w-sm">Try modifying your search or use the ledger interface on the left to write a brand new track entry.</p>
                 </div>
@@ -126,7 +115,7 @@
                                 <a href="/post/<%= encodeURIComponent(post.title) %>" class="text-lg font-bold text-gray-900 hover:text-maroon block transition-colors">
                                     <%= post.title %>
                                 </a>
-                                <p class="text-xs text-gray-400 font-medium flex items-center gap-2 text-maroon">
+                                <p class="text-xs font-medium flex items-center gap-2 text-maroon">
                                     <%= post.userId && (post.userId.username || post.userId.name) ? (post.userId.username || post.userId.name) : 'Anonymous Writer' %>
                                 </p>
                             </div>
