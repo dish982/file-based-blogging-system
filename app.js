@@ -6,14 +6,14 @@ const path = require('path');
 const dotenv = require('dotenv');
 const session = require('express-session');
 const connectDB = require('./config/db.js');
-
-// Initialize the core Express 
+const MongoStore = require('connect-mongo');    
 const app = express();
-const PORT = process.env.PORT || 3000;
 
 // Load environment variables 
 dotenv.config();
 connectDB();
+
+const PORT = process.env.PORT || 3000;
 
 //Set view engine to EJS //Middleware
 app.set('view engine', 'ejs');
@@ -27,14 +27,20 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(session({
-    secret: process.env.SESSION_KEY,
-    resave: true,            
-    saveUninitialized: true, 
-    cookie: { 
-        secure: false,        
-        maxAge: 24 * 60 * 60 * 1000 
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false, 
+    store: MongoStore.create({
+        mongoUrl: process.env.MONGODB_URI, 
+        ttl: 14 * 24 * 60 * 60 
+    }),
+    cookie: {
+        maxAge: 1000 * 60 * 60 * 24 * 14, 
+        secure: false, 
+        httpOnly: true 
     }
 }));
+
 app.use((req, res, next) => {
     res.locals.user = req.session.user || null;
     res.locals.error = null;
