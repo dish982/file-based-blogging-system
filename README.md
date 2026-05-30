@@ -1,33 +1,29 @@
-# WordWeave — A Full-Stack Blogging Platform 🩷
+# WordWeave — A Full-Stack Blogging Platform 
 
 Hey there! Im Disha and WordWeave is my first solo fullstack project! WordWeave is a feature-rich full-stack blogging web application built using **Node.js**, **Express**, and **MongoDB**. It features a modern user dashboard, secure multi-user authentication, privacy controls (Public/Private blogs), dynamic search logic, and a fully responsive interface.
 
 ---
 
-## 🎨 Project Preview
-
-
-
 ---
 
-## ✨ Features
+## Features
 
-### 🔐 Secure Authentication & Session Control
+### Secure Authentication & Session Control
 - Secure user signup and login architecture.
 - Session-based authorization (`express-session`) protecting sensitive dashboard and editor views.
 
-### ✍️ Comprehensive CRUD Management
+### CRUD Management
 - **Create:** Intuitive, distraction-free blog creation form.
 - **Read:** Personalized interactive dashboard rendering aggregated feeds dynamically.
 - **Update/Delete:** Full ownership-guaranteed management systems allowing users to edit or delete their own posts safely.
 
-### 👁️ Privacy Framework
+### Privacy Framework
 - Granular control over visibility options (`isPublic: true/false`).
 - Public feeds are readable by all authenticated users, while private drafts remain strictly locked within the author's ecosystem.
 
 ---
 
-## 💻 Tech Stack
+## Tech Stack
 
 - **Backend Architecture:** Node.js, Express.js
 - **Database Layer:** MongoDB, Mongoose (ODM framework)
