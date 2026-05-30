@@ -7,11 +7,11 @@ const dotenv = require('dotenv');
 const session = require('express-session');
 const connectDB = require('./config/db.js');
 
-// Initialize the core Express instance
+// Initialize the core Express 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
-// Load environment variables and spin up your cloud database
+// Load environment variables 
 dotenv.config();
 connectDB();
 
@@ -41,7 +41,6 @@ app.use((req, res, next) => {
     res.locals.success = null;
     next();
 });
- 
 
 
 //Routes

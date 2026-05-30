@@ -81,7 +81,7 @@ router.post('/login', async (req, res) => {
             return res.render('auth', { error: 'Invalid Credentials (Email not found)', success: null });
         }
 
-        // Hash the incoming login password using the user's unique saved salt
+        // Hash the incoming login password using the users unique saved salt
         const verifyHash = crypto.pbkdf2Sync(String(password), user.salt, 1000, 64, 'sha512').toString('hex');
 
         // Direct string match check
