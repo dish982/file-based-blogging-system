@@ -6,7 +6,8 @@ const path = require('path');
 const dotenv = require('dotenv');
 const session = require('express-session');
 const connectDB = require('./config/db.js');
-const MongoStore = require('connect-mongo');    
+const connectMongo = require("connect-mongo");
+const MongoStore = connectMongo.default || connectMongo;
 const app = express();
 
 // Load environment variables 
@@ -27,13 +28,13 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(session({
-    secret: process.env.SESSION_SECRET,
+    secret: process.env.SESSION_KEY,
     resave: false,
     saveUninitialized: false, 
     store: MongoStore.create({
-        mongoUrl: process.env.MONGODB_URI, 
-        ttl: 14 * 24 * 60 * 60 
-    }),
+    mongoUrl: process.env.MONGODB_URI,
+    ttl: 14 * 24 * 60 * 60
+    }), 
     cookie: {
         maxAge: 1000 * 60 * 60 * 24 * 14, 
         secure: false, 
